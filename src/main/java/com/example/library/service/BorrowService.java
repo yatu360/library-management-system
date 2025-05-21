@@ -1,6 +1,7 @@
 package com.example.library.service;
 
 import com.example.library.dto.BorrowRequest;
+import com.example.library.dto.ReturnRequest;
 import com.example.library.model.Book;
 import com.example.library.model.BorrowRecord;
 import com.example.library.model.User;
@@ -41,5 +42,31 @@ public class BorrowService {
         borrowRecordRepository.save(record);
 
         return "Book borrowed successfully";
+    }
+
+    public String returnBook(ReturnRequest request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(()-> new RuntimeException(("User not found")));
+
+        Book book = bookRepository.findById(request.getBookId())
+                .orElseThrow(()-> new RuntimeException("Cannot find book"));
+
+        BorrowRecord record = borrowRecordRepository.findByUser(user).stream()
+                .filter(r->r.getBook().getId().equals(book.getId()) && r.getReturnDate() == null)
+                .findFirst()
+                .orElse(null);
+
+        if (record == null) {
+            return "No active borrow record";
+        }
+
+        record.setReturnDate(LocalDate.now());
+        borrowRecordRepository.save(record);
+
+        book.setAvailableCopies(book.getAvailableCopies() + 1);
+        bookRepository.save(book);
+
+        return "Book returned successfully";
+
     }
 }
