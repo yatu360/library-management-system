@@ -19,9 +19,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BorrowService {
 
-    private final BorrowRecordRepository borrowRecordRepository;
+
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final BorrowRecordRepository borrowRecordRepository;
 
     public String borrowBook(BorrowRequest borrowRequest) {
         User user = userRepository.findById(borrowRequest.getUserId())
@@ -30,7 +31,7 @@ public class BorrowService {
                 .orElseThrow(()-> new RuntimeException("Book not found"));
 
         if (book.getAvailableCopies() <= 0) {
-            return "Book is not available";
+            return "Book is not available.";
         }
 
         book.setAvailableCopies(book.getAvailableCopies() -1);
@@ -43,7 +44,7 @@ public class BorrowService {
                 .build();
         borrowRecordRepository.save(record);
 
-        return "Book borrowed successfully";
+        return "Book borrowed successfully.";
     }
 
     public String returnBook(ReturnRequest request) {
@@ -59,7 +60,7 @@ public class BorrowService {
                 .orElse(null);
 
         if (record == null) {
-            return "No active borrow record";
+            return "No active borrow record found for this book and user.";
         }
 
         record.setReturnDate(LocalDate.now());
@@ -68,7 +69,7 @@ public class BorrowService {
         book.setAvailableCopies(book.getAvailableCopies() + 1);
         bookRepository.save(book);
 
-        return "Book returned successfully";
+        return "Book returned successfully.";
 
     }
 
