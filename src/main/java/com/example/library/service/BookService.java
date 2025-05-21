@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@XSlf4j
 @RequiredArgsConstructor
 public class BookService {
 
