@@ -1,13 +1,13 @@
 package com.example.library.controller;
 
+import com.example.library.dto.BorrowHistoryResponse;
 import com.example.library.dto.BorrowRequest;
 import com.example.library.dto.ReturnRequest;
 import com.example.library.service.BorrowService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/borrow")
@@ -24,6 +24,11 @@ public class BorrowController {
     @PostMapping("/return")
     public String returnBook(@RequestBody ReturnRequest request) {
         return borrowService.returnBook(request);
+    }
+
+    @GetMapping("/history/{userId}")
+    public List<BorrowHistoryResponse> getHistory(@PathVariable Long userId) {
+        return borrowService.getBorrowHistory(userId);
     }
 
 

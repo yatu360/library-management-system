@@ -1,5 +1,6 @@
 package com.example.library.service;
 
+import com.example.library.dto.BorrowHistoryResponse;
 import com.example.library.dto.BorrowRequest;
 import com.example.library.dto.ReturnRequest;
 import com.example.library.model.Book;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -69,4 +71,17 @@ public class BorrowService {
         return "Book returned successfully";
 
     }
+
+    public List<BorrowHistoryResponse> getBorrowHistory(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
+
+        return borrowRecordRepository.findByUser(user).stream()
+                .map(record -> BorrowHistoryResponse.builder()
+                        .bookTitle(record.getBook().getTitle())
+                        .borrowDate(record.getBorrowDate())
+                        .returnDate(record.getReturnDate()).build()).toList();
+    }
+
+
+
 }
